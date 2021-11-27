@@ -9,7 +9,6 @@ import {utils as utils_} from './utils/utils';
 import {utilsUrl as utilsUrl_} from './utils/url';
 import {platform as platform_} from './utils/platform';
 
-//get rid of compiler mess
 var Map = Map_;
 var Inspector = Inspector_;
 var Renderer = Renderer_;
@@ -26,13 +25,13 @@ var Core = function(element, config, coreInterface) {
     this.killed = false;
     this.config = {
         map : null,
-        mapCache : 1100, //old value 900
-        mapGPUCache : 600, //old value 500, 360
+        mapCache : 1100,
+        mapGPUCache : 600, 
         mapMetatileCache : 60,
         mapTexelSizeFit : 1.1,
         mapMaxHiresLodLevels : 2,
         mapDownloadThreads : 20,
-        mapMaxProcessingTime : 10, //1000*20,
+        mapMaxProcessingTime : 10, 
         mapMaxGeodataProcessingTime : 10,
         mapMobileMode : false,
         mapMobileModeAutodect : true,
@@ -55,17 +54,17 @@ var Core = function(element, config, coreInterface) {
         mapSmartNodeParsing : true,
         mapLoadErrorRetryTime : 3000,
         mapLoadErrorMaxRetryCount : 3,
-        mapLoadMode : 'topdown', // 'topdown', 'downtop', 'fit', 'fitonly'
-        mapGeodataLoadMode : 'fit', // 'fitonly'
-        mapSplitMeshes : true, // used for topdown load mode
-        mapSplitMargin : 0.0025, // used for topdown load mode
-        mapSplitSpace : null, // used octant spliting demo
-        mapSplitLods : false, // used octant spliting demo
-        mapGridMode : 'linear', // 'flat'
+        mapLoadMode : 'topdown',
+        mapGeodataLoadMode : 'fit',
+        mapSplitMeshes : true, 
+        mapSplitMargin : 0.0025,
+        mapSplitSpace : null, 
+        mapSplitLods : false, 
+        mapGridMode : 'linear',
         mapGridSurrogatez : false,
         mapGridUnderSurface: 0,
         mapGridTextureLevel: -1,
-        mapGridTextureLayer: null, // 'bing",
+        mapGridTextureLayer: null,
         mapXhrImageLoad : true,
         mapStoreLoadStats : false,
         mapRefreshCycles : 3,
@@ -90,10 +89,10 @@ var Core = function(element, config, coreInterface) {
         mapAsyncImageDecode : true,
 
         mapFeatureGridCells : 31,
-        mapFeaturesPerSquareInch : 0.25, //0.6614,
+        mapFeaturesPerSquareInch : 0.25,
         mapFeaturesSortByTop : false,
 
-        mapFeaturesReduceMode : 'scr-count1', //have to be 'scr-count1' because of legacy https://rigel.mlwn.se/store/map-config/high-terrain/
+        mapFeaturesReduceMode : 'scr-count1', 
         mapFeaturesReduceParams : null,
         mapFeaturesReduceFactor : 1,
         mapFeaturesReduceFactor2 : 1,
@@ -102,9 +101,8 @@ var Core = function(element, config, coreInterface) {
         mapDMapMode : 1,
 
         mapDegradeHorizon : false,
-        mapDegradeHorizonParams : [1, 1500, 97500, 3500], //[1, 3000, 15000, 7000],
+        mapDegradeHorizonParams : [1, 1500, 97500, 3500],
         mapDefaultFont : '//cdn.melown.com/libs/vtsjs/fonts/noto-basic/1.0.0/noto.fnt',
-        //mapDefaultFont : '../fonts/basic.fnt',
         mapFog : true,
         mapNoTextures: false,
         mapMetricUnits : !(lang == 'en' || lang.indexOf('en-') == 0),
@@ -125,7 +123,6 @@ var Core = function(element, config, coreInterface) {
     this.configStorage = {};
     this.element = element;
     this.coreInterface = coreInterface;
-    //this.options = options;
     this.ready = false;
     this.listeners = [];
     this.listenerCounter = 0;
@@ -141,8 +138,6 @@ var Core = function(element, config, coreInterface) {
     this.rendererInterface = new RendererInterface(this.renderer);
     this.proj4 = Proj4;
     this.contextLost = false;
-
-    //platform detection
     platform.init();
     this.requestAnimFrame = (
                window.requestAnimationFrame ||
@@ -231,7 +226,6 @@ Core.prototype.loadMap = function(path) {
     var onMapConfigError = (function() {
     }).bind(this);
 
-    //this.tokenLoaded = true;
 
     var onAutorizationLoaded = (function(data) {
         if (!data || (data && data['status'])) {
@@ -270,7 +264,6 @@ Core.prototype.loadMap = function(path) {
     }).bind(this);
 
     var onAutorizationError = (function() {
-        // eslint-disable-next-line
         console.log('auth token not loaded');
 
         if (this.tokenCanBeSkiped) {
@@ -285,13 +278,6 @@ Core.prototype.loadMap = function(path) {
         onLoaded();
     }).bind(this);
 
-    /*var onImageCookieError = (function() {
-        // eslint-disable-next-line
-        console.log('auth cookie not loaded');
-    }).bind(this);*/
-
-    //var baseUrl = path.split('?')[0].split('/').slice(0, -1).join('/')+'/';
-
     var onLoadMapconfig = (function(path) {
         utils.loadJSON(path, onMapConfigLoaded, onMapConfigError, null, utils.useCredentials, this.xhrParams);
     }).bind(this);
@@ -299,7 +285,6 @@ Core.prototype.loadMap = function(path) {
     var onLoadImageCookie = (function(url, originUrl) {
         url = utilsUrl.getProcessUrl(url, originUrl);
         this.tokenCookieHost = utilsUrl.getHost(url);
-        //utils.loadImage(url, onImageCookieLoaded, onImageCookieError);
         var iframe = document.createElement('iframe');
         this.tokenIFrame = iframe;
         iframe.onload = onImageCookieLoaded;
@@ -307,8 +292,6 @@ Core.prototype.loadMap = function(path) {
         iframe.style.display = 'none';
         document.body.appendChild(iframe);
     }).bind(this);
-
-    //if (false && this.config.authorization) {
     if (this.config.authorization) {
         this.tokenCookieLoaded = false;
 
@@ -372,16 +355,10 @@ Core.prototype.getProj4 = function() {
 };
 
 
-Core.prototype.getOption = function(/*key, value*/) {
-};
-
-
-Core.prototype.setOption = function(/*key, value*/) {
-};
 
 
 Core.prototype.on = function(name, listener, wait, once) {
-    if (this.killed) { // || this.renderer == null) {
+    if (this.killed) {
         return;
     }
 
@@ -400,8 +377,6 @@ Core.prototype.once = function(name, listener, wait) {
     this.on(name, listener, wait, true);
 };
 
-
-// private
 Core.prototype.callListener = function(name, event, log) {
     for (var i = 0; i < this.listeners.length; i++) {
         if (this.listeners[i].name == name) {
@@ -420,16 +395,13 @@ Core.prototype.callListener = function(name, event, log) {
     }
 
     if (log) {
-        // eslint-disable-next-line
         console.log('event ' + name + ': ' + JSON.stringify(event));
     }
 };
 
-// private
 Core.prototype.removeListener = function(id) {
     for (var i = 0; i < this.listeners.length; i++) {
         if (this.listeners[i].id == id) {
-            //this.listeners[i].splice(i, 1);
             this.listeners.splice(i, 1);
             return;
         }
@@ -455,12 +427,6 @@ Core.prototype.onUpdate = function() {
 
         this.map.update();
     }
-
-    //TODO: detect view change
-    //this.callListener("view-update", {"position": position, "orientaion":orientation,
-    //                                  "fov": renderer.camera.getFov()});
-
-    //this.callListener("render-update", { "dirty": true, "message": "DOM element does not exist" });
 
     this.callListener('tick', {});
 
@@ -591,15 +557,10 @@ function getCoreVersion(full) {
 }
 
 
-/*
-bool checkSupport()
-    Returns true if the environment is capable of running the WebGL browser, false otherwise.
-*/
 
 function checkSupport() {
     platform.init();
 
-    //is webgl supported
     var canvas = document.createElement('canvas');
 
     if (canvas == null) {
